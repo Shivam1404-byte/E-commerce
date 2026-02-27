@@ -4,22 +4,22 @@ import { loginService } from "../services/user.login"
 import  jwt  from 'jsonwebtoken'
 
 
-export const register =  async(req:Request,res:Response)=>{
+export const register =  async(req:Request,res:Response,next:NextFunction)=>{
     try {
         const {email,password} = req.body
 
         const user = await registerService(email,password)
 
         res.status(201).json(user)
-    } catch (error) {
-        res.status(400).json({ error: 'Registration failed' })
+    } catch (err) {
+        next(err)
     }
 }
 
-export const login = async(req:Request,res:Response)=>{
+export const login = async(req:Request,res:Response,next:NextFunction)=>{
     try {
         const {email,password} = req.body
-
+        console.log(req.body)
         const user = await loginService(email,password)
 
         const token = jwt.sign(
@@ -34,7 +34,7 @@ export const login = async(req:Request,res:Response)=>{
                 token: token
             }
         )
-    } catch (error) {
-        res.status(400).json({ error: 'Login failed' })
+    } catch (err) {
+        next(err)
     }
 }

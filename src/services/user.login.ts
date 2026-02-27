@@ -1,15 +1,23 @@
 import {prisma} from '../db/prisma'
 import bcrypt from 'bcrypt'
-import { config } from 'dotenv'
-config()
 
-export const loginService = async (email:string,password:string)=>{
+type User={
+    id:string,
+    email:string
+}
+
+export const loginService = async (email:string,password:string): Promise<User>=>{
+    
+    if(!email || !password){
+        throw new Error("Email and password required")
+    }
+
     const user = await prisma.user.findUnique({
         where:{email:email}
     })
 
-    if(!user){
-        throw new Error("Invalid Credentials E")
+    if (!user){
+        throw new Error("Invalid credentials U")
     }
 
     const checkPassword = await bcrypt.compare(password,user.password_hash)
@@ -18,5 +26,8 @@ export const loginService = async (email:string,password:string)=>{
         throw new Error("Invalid Credetials P")
     }
 
-    return user
+    return {
+        id: user.id,
+        email: user.email,
+}
 }

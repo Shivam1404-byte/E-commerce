@@ -1,17 +1,61 @@
-#E-commerce 
+# E-Commerce Backend (Work in Progress)
 
-- A full-stack e-commerce platform supporting role-based access (Admin, Vendor, Customer), JWT authentication, product catalog management, cart persistence, order processing, and secure checkout simulation.
+## Overview
+This project is the backend foundation of an e-commerce platform.  
+Currently, authentication and user registration are implemented.  
+Future modules will include product management, cart system, order processing, and role-based access control.
 
-Backend:
+## Current Features
+- User Registration
+- User Login
+- Password hashing using bcrypt
+- JWT-based authentication
+- Structured architecture (Controller-Service pattern)
 
-Node.js
+## Tech Stack
+- Node.js
+- Express
+- TypeScript
+- PostgreSQL
+- Prisma ORM
+- JWT
+- Bcrypt
 
-Express
+## Project Structure
+src/
+ ├── controllers/
+ ├── services/
+ ├── routes/
+ ├── middlewares/
+ ├── prisma/
 
-PostgreSQL
+## API Endpoints
 
-Prisma ORM
+### POST /auth/register
+Registers a new user.
 
-JWT Authentication
+### POST /auth/login
+Authenticates user and returns JWT.
 
-Bcrypt for hashing
+## Setup Instructions
+
+```bash
+git clone https://github.com/Shivam1404-byte/E-commerce.git
+cd E-commerce
+npm install
+cp .env.example .env
+npx prisma migrate dev
+npm run dev
+```
+
+## Environment Variables
+- DATABASE_URL
+- JWT_SECRET
+- PORT
+
+## Roadmap
+- Implement role-based access control (Admin, Vendor, Customer)
+- Product management
+- Cart functionality
+- Order creation
+- Payment integration
