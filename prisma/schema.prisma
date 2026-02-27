@@ -1,0 +1,54 @@
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role{
+  ADMIN
+  VENDOR
+  CONSUMER
+}
+
+enum Status{
+  ACTIVE
+  UNACTIVE
+}
+
+model User {
+  id              String @id @default(uuid())
+  email           String @unique
+  password_hash   String 
+  role            Role
+  created_at      DateTime     @default(now())
+
+  store           Store[]
+}
+
+model Store {
+  id           String @id @default(uuid())
+  name         String
+  vendor_id    String
+  status       Status
+  created_at   DateTime     @default(now())
+  
+  product      Product[]
+
+  vendor      User @relation(fields: [vendor_id], references:[id])
+}
+
+model Product {
+  id            String @id @default(uuid())
+  name          String
+  descriptions  String
+  stock         Int
+  store_id      String
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @default(now())
+
+  store         Store @relation(fields: [store_id], references:[id])
+}
