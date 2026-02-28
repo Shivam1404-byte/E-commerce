@@ -1,5 +1,6 @@
 import {prisma} from '../db/prisma'
 import bcrypt from 'bcrypt'
+import { AppError } from '../utils/appError'
 
 type User={
     id:string,
@@ -9,7 +10,7 @@ type User={
 export const loginService = async (email:string,password:string): Promise<User>=>{
     
     if(!email || !password){
-        throw new Error("Email and password required")
+        throw new AppError("Email and password required",401)
     }
 
     const user = await prisma.user.findUnique({
@@ -17,13 +18,13 @@ export const loginService = async (email:string,password:string): Promise<User>=
     })
 
     if (!user){
-        throw new Error("Invalid credentials U")
+        throw new AppError("Email exist!",400)
     }
 
     const checkPassword = await bcrypt.compare(password,user.password_hash)
 
     if(!checkPassword){
-        throw new Error("Invalid Credetials P")
+        throw new AppError("Invalid Credetials ",401)
     }
 
     return {

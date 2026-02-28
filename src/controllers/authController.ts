@@ -5,21 +5,15 @@ import  jwt  from 'jsonwebtoken'
 
 
 export const register =  async(req:Request,res:Response,next:NextFunction)=>{
-    try {
         const {email,password} = req.body
 
         const user = await registerService(email,password)
 
         res.status(201).json(user)
-    } catch (err) {
-        next(err)
-    }
 }
 
-export const login = async(req:Request,res:Response,next:NextFunction)=>{
-    try {
+export const login = async(req:Request,res:Response)=>{
         const {email,password} = req.body
-        console.log(req.body)
         const user = await loginService(email,password)
 
         const token = jwt.sign(
@@ -34,7 +28,4 @@ export const login = async(req:Request,res:Response,next:NextFunction)=>{
                 token: token
             }
         )
-    } catch (err) {
-        next(err)
-    }
 }

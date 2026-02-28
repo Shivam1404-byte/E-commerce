@@ -6,5 +6,5 @@ export const errorhandler = async(err:any,req:Request,res:Response,next:NextFunc
     if (err instanceof AppError){
         return res.status(err.statusCode).json({Message:err.message})
     }
-    return res.status(err.statusCode || 500).json("Internal Server Error")
+    return res.status(err.statusCode || 500).json({Error:"Internal Server Error"})
 }
