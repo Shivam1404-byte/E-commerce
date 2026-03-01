@@ -24,7 +24,7 @@ export const loginService = async (email:string,password:string): Promise<User>=
     const checkPassword = await bcrypt.compare(password,user.password_hash)
 
     if(!checkPassword){
-        throw new AppError("Invalid Credetials ",401)
+        throw new AppError("Invalid Credentials ",401)
     }
 
     return {

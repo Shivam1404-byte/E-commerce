@@ -15,8 +15,9 @@ enum Role{
 }
 
 enum Status{
-  ACTIVE
-  UNACTIVE
+  PENDING
+  APPROVED
+  SUSPENDED
 }
 
 model User {
@@ -27,6 +28,8 @@ model User {
   created_at      DateTime     @default(now())
 
   store           Store[]
+  cart            Cart[]
+  order           Order[]
 }
 
 model Store {
@@ -37,6 +40,8 @@ model Store {
   created_at   DateTime     @default(now())
   
   product      Product[]
+  cart         Cart[]
+  order        Order[]
 
   vendor      User @relation(fields: [vendor_id], references:[id])
 }
@@ -46,9 +51,86 @@ model Product {
   name          String
   descriptions  String
   stock         Int
+  price         Int
   store_id      String
   created_at    DateTime  @default(now())
   updated_at    DateTime  @default(now())
+  is_published  Boolean @default(false)
+
+  productCategories   ProductCategories[]
+  cartItem       CartItem[]
+  OrderItem    OrderItem[]
 
   store         Store @relation(fields: [store_id], references:[id])
+}
+
+model Categories {
+  id          String  @id @default(uuid())
+  name        String
+
+  productCategories   ProductCategories[]
+}
+
+model ProductCategories {
+  id            String  @id @default(uuid())
+  product_id    String  
+  categories_id String
+
+  product       Product @relation(fields: [product_id], references:[id])
+  categories    Categories @relation(fields: [categories_id], references:[id])
+}
+
+model Cart {
+  id          String  @id  @default(uuid())
+  user_id     String
+  store_id    String
+  created_at  DateTime    @default(now())
+
+  cartItem    CartItem[]
+
+  user        User @relation(fields: [user_id],references:[id])
+  store       Store   @relation(fields: [store_id],references:[id])
+}
+
+model CartItem {
+  id          String  @id @default(uuid())
+  cart_id     String
+  product_id  String
+  quantity    Int
+
+  cart        Cart @relation(fields: [cart_id],references:[id])
+  product     Product @relation(fields: [product_id],references:[id])
+}
+
+enum orderStatus{
+  PENDING
+  PAID
+  SHIPPED
+  COMPLETED
+  CANCELLED
+}
+
+model  Order {
+  id                String @id @default(uuid())
+  user_id           String
+  store_id          String
+  total_price       Int
+  status            orderStatus @default(PENDING)
+  idempotency_key   String @unique
+  created_at        DateTime @default(now())
+
+  OrderItem         OrderItem[]
+  user   User  @relation(fields: [user_id], references: [id])
+  store  Store @relation(fields: [store_id], references: [id])
+}
+
+model OrderItem {
+  id                String @id @default(uuid())
+  order_id          String
+  product_id        String
+  quantity          Int
+  purchase_price    Int
+
+  order             Order @relation(fields: [order_id], references: [id])
+  product           Product @relation(fields: [product_id],references:[id])            
 }

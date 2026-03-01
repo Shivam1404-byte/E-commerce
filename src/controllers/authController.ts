@@ -1,10 +1,10 @@
-import { Request,Response,NextFunction } from "express"
+import { Request,Response} from "express"
 import { registerService } from "../services/user.register"
 import { loginService } from "../services/user.login"
 import  jwt  from 'jsonwebtoken'
 
 
-export const register =  async(req:Request,res:Response,next:NextFunction)=>{
+export const register =  async(req:Request,res:Response)=>{
         const {email,password} = req.body
 
         const user = await registerService(email,password)
