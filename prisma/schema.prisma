@@ -36,8 +36,9 @@ model Store {
   id           String @id @default(uuid())
   name         String
   vendor_id    String
-  status       Status
+  status       Status @default(PENDING)
   created_at   DateTime     @default(now())
+  is_deleted   Boolean      @default(false)
   
   product      Product[]
   cart         Cart[]

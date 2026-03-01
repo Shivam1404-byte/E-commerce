@@ -17,22 +17,21 @@ declare global{
 
 
 export const middleware = asyncHandler(async(req:Request,res:Response,next:NextFunction) =>{
-    const token = req.headers['authorization']?.split(' ')[1]
-
-    if(!token || !token.startsWith("Bearer ")){
+    const authHeader = req.headers['authorization']
+    if(!authHeader || !authHeader.startsWith("Bearer ")){
         throw new AppError("Token not provided",401)
     }
+    const token = authHeader.split(" ")[1]
 
     let decoded
     try {
-    decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string }
-  } catch (err) {
-    throw new AppError( "Invalid or expired token",401)
-  }
+    decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string }
+    } catch (err) {
+    throw new AppError("Invalid or expired token", 401)
+    }
     const user = await prisma.user.findUnique({
-        where:{id:decoded.id}
+        where:{id:decoded.userId as string}
     })
-
     if(!user){
         throw new AppError("User not Found",401)
     }

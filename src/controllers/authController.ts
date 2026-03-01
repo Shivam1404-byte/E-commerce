@@ -1,6 +1,6 @@
 import { Request,Response} from "express"
-import { registerService } from "../services/user.register"
-import { loginService } from "../services/user.login"
+import { registerService } from "../services//auth/user.register"
+import { loginService } from "../services/auth/user.login"
 import  jwt  from 'jsonwebtoken'
 
 

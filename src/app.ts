@@ -1,12 +1,14 @@
 import express from "express"
 import {router} from "./routes/authRoute"
 import { errorhandler } from "./middleware/errorMiddleware"
+import { store_route } from "./routes/storeRoute"
 
 export const app = express()
 
 app.use(express.json())
 
 app.use('/auth',router)
+app.use('/store',store_route)
 
 
 app.get('/',(req,res)=>{

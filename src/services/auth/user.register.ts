@@ -1,6 +1,6 @@
-import {prisma} from '../db/prisma'
+import {prisma} from '../../db/prisma'
 import bcrypt from 'bcrypt'
-import { AppError } from '../utils/appError'
+import { AppError } from '../../utils/appError'
 
 type User = {
     id:string,
