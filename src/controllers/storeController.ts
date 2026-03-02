@@ -8,11 +8,8 @@ interface CustomRequest extends Request {
 }
 
 export const create_store = asyncHandler(async(req:CustomRequest,res:Response)=>{
-    console.log("Create controller")
     const {name} = req.body
     const vendor_id = req.user?.id;
-
-    console.log(name,vendor_id)
 
     const store = await createStore(name,vendor_id as string)
 

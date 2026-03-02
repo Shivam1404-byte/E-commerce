@@ -18,7 +18,7 @@ export const loginService = async (email:string,password:string): Promise<User>=
     })
 
     if (!user){
-        throw new AppError("Email exist!",400)
+        throw new AppError("Invalid Credentials!",400)
     }
 
     const checkPassword = await bcrypt.compare(password,user.password_hash)

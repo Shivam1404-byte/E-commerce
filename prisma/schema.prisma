@@ -55,8 +55,9 @@ model Product {
   price         Int
   store_id      String
   created_at    DateTime  @default(now())
-  updated_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
   is_published  Boolean @default(false)
+  is_deleted    Boolean @default(false)
 
   productCategories   ProductCategories[]
   cartItem       CartItem[]
