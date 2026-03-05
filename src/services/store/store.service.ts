@@ -1,15 +1,20 @@
 import {prisma} from "../../db/prisma"
 import { AppError } from '../../utils/appError'
 import { Status } from "../../generated/prisma/client"
+import bcrypt from "bcrypt"
 
 type Store={
     id:string,
     name:string
 }
 
-export const createStore = async(name:string,id:string): Promise<Store> =>{
+export const createStore = async(name:string,email:string,password:string,id:string): Promise<Store> =>{
     if (!name){
         throw new AppError("Name required!",401)
+    }
+
+    if (!email || !password){
+        throw new AppError("Email and password required",401)
     }
     
     const checkStore = await prisma.store.findMany({
@@ -18,15 +23,37 @@ export const createStore = async(name:string,id:string): Promise<Store> =>{
         }
     })
 
+    const passwordHash = await bcrypt.hash(password,10)
+
     if(!checkStore){
         throw new AppError("Store already exist",401)
     }
 
-    const store = await prisma.store.create({
-        data:{
-            name:name,
-            vendor_id:id
+    const store = await prisma.$transaction(async (tx)=>{
+        let user = await tx.user.findUnique({
+            where:{email:email}
+        }) 
+
+        if(user){
+            throw new AppError("User already exist",400)
         }
+
+        const createUser = await tx.user.create({
+            data:{
+                email:email,
+                password_hash:passwordHash,
+                role:"VENDOR"
+            }
+        })
+
+        const store = await tx.store.create({
+            data:{
+                name:name,
+                vendor_id:createUser.id
+            }
+        })
+
+        return store
     })
 
     return store
@@ -37,6 +64,14 @@ type getStore={
     name:string,
     status:Status,
 
+}
+
+export const getAdminStore = async ()=>{
+    const stores = await prisma.store.findMany({
+    include: {
+        vendor: true
+  }
+})
 }
 
 export const getStore = async(vendor_id:string): Promise<getStore> =>{

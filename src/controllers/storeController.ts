@@ -8,10 +8,10 @@ interface CustomRequest extends Request {
 }
 
 export const create_store = asyncHandler(async(req:CustomRequest,res:Response)=>{
-    const {name} = req.body
+    const {name,email,password} = req.body
     const vendor_id = req.user?.id;
 
-    const store = await createStore(name,vendor_id as string)
+    const store = await createStore(name,email,password,vendor_id as string)
 
     res.status(200).json(store)
 })
