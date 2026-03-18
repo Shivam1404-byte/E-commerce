@@ -7,5 +7,5 @@ export const productRoute = express.Router()
 
 productRoute.post('/create',middleware,authorizeRoles("VENDOR"),createProduct)
 productRoute.get('/get',middleware,getProduct)
-productRoute.put('/update/:id',middleware,updateProduct)
-productRoute.delete('/delete/:id',middleware,deleteProduct)
+productRoute.put('/update/:id',middleware,authorizeRoles("VENDOR"),updateProduct)
+productRoute.delete('/delete/:id',middleware,authorizeRoles("VENDOR"),deleteProduct)

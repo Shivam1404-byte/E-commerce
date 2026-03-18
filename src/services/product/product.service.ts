@@ -1,7 +1,7 @@
 import {prisma} from "../../db/prisma"
 import { AppError } from "../../utils/appError"
 
-export const create_product = async(name:string,description:string,stock:number,price:number,id:string)=>{
+export const create_product = async(name:string,description:string,stock:number,price:number,id:string,categoryId:string)=>{
     if(!name){
         throw new AppError("Name required",401)
     }
@@ -14,6 +14,14 @@ export const create_product = async(name:string,description:string,stock:number,
     const store = await prisma.store.findFirst({
         where:{vendor_id:id}
     })
+
+    const category = prisma.category.findUnique({
+        where:{id:categoryId}
+    })
+
+    if(categoryId){
+        throw new AppError("Category not found",404)
+    }
     
     if(!store){
         throw new AppError("Store not found",401)
@@ -24,7 +32,8 @@ export const create_product = async(name:string,description:string,stock:number,
             descriptions:description,
             stock:stock,
             price:price,
-            store_id:store.id
+            store_id:store.id,
+            categoryId:categoryId
         }
     })
     return product

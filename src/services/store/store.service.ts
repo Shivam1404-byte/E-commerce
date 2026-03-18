@@ -49,7 +49,8 @@ export const createStore = async(name:string,email:string,password:string,id:str
         const store = await tx.store.create({
             data:{
                 name:name,
-                vendor_id:createUser.id
+                vendor_id:createUser.id,
+                status:"APPROVED"
             }
         })
 
@@ -67,11 +68,18 @@ type getStore={
 }
 
 export const getAdminStore = async ()=>{
+    
     const stores = await prisma.store.findMany({
     include: {
-        vendor: true
-  }
-})
+    vendor: {
+        select: {
+        id: true,
+        email: true
+        }
+    }
+    }
+    })
+    return stores
 }
 
 export const getStore = async(vendor_id:string): Promise<getStore> =>{
@@ -101,8 +109,7 @@ export const updateStore = async(id:string,vendor_id:string,name:string,status:S
     await prisma.store.update({
         where:{id:id,vendor_id:vendor_id},
         data:{
-            name:name,
-            status:status
+            name:name
         }
     })
 
@@ -124,6 +131,7 @@ export const deleteStore = async(id:string,vendor_id:string)=>{
     await prisma.store.update({
         where:{id:id,vendor_id:vendor_id},
         data:{
+            status:"SUSPENDED",
             is_deleted:true
         }
     })

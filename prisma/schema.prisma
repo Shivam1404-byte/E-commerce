@@ -58,28 +58,20 @@ model Product {
   updated_at    DateTime  @updatedAt
   is_published  Boolean @default(false)
   is_deleted    Boolean @default(false)
+  categoryId    String?
+  
+  cartItem      CartItem[]
+  OrderItem     OrderItem[]
 
-  productCategories   ProductCategories[]
-  cartItem       CartItem[]
-  OrderItem    OrderItem[]
-
+  category      Category? @relation(fields: [categoryId], references: [id])
   store         Store @relation(fields: [store_id], references:[id])
 }
 
-model Categories {
+model Category {
   id          String  @id @default(uuid())
   name        String
 
-  productCategories   ProductCategories[]
-}
-
-model ProductCategories {
-  id            String  @id @default(uuid())
-  product_id    String  
-  categories_id String
-
-  product       Product @relation(fields: [product_id], references:[id])
-  categories    Categories @relation(fields: [categories_id], references:[id])
+  products    Product[]
 }
 
 model Cart {

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import { Role } from "../generated/prisma/client"
-import { createStore,getStore,updateStore,deleteStore } from "../services/store/store.service";
+import { createStore,getStore,updateStore,deleteStore,getAdminStore } from "../services/store/store.service";
 
 interface CustomRequest extends Request {
   user?: { id: string , role:Role};
@@ -13,6 +13,12 @@ export const create_store = asyncHandler(async(req:CustomRequest,res:Response)=>
 
     const store = await createStore(name,email,password,vendor_id as string)
 
+    res.status(200).json(store)
+})
+
+export const get_AdminStore = asyncHandler(async(req:CustomRequest,res:Response)=>{
+    const store = await getAdminStore()
+    
     res.status(200).json(store)
 })
 

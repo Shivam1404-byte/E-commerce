@@ -8,10 +8,10 @@ interface CustomRequest extends Request{
 }
 
 export const createProduct = async(req:CustomRequest,res:Response)=>{
-    const {name,description,stock,price} = req.body
+    const {name,description,stock,price,categoryId} = req.body
     const userId = req.user?.id as string
     
-    const product = await create_product(name,description,stock,price,userId)
+    const product = await create_product(name,description,stock,price,userId,categoryId)
     
     res.json(product)
 }
