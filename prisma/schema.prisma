@@ -75,22 +75,35 @@ model Category {
 }
 
 model Cart {
-  id          String  @id  @default(uuid())
+  id          String   @id @default(uuid())
   user_id     String
   store_id    String
-  created_at  DateTime    @default(now())
+  status      CartStatus @default(ACTIVE)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
 
-  cartItem    CartItem[]
+  cartItems   CartItem[]
 
-  user        User @relation(fields: [user_id],references:[id])
-  store       Store   @relation(fields: [store_id],references:[id])
+  user        User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  store       Store  @relation(fields: [store_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, store_id])
 }
+
+enum CartStatus {
+  ACTIVE
+  CHECKED_OUT
+  ABANDONED
+}
+
 
 model CartItem {
   id          String  @id @default(uuid())
   cart_id     String
   product_id  String
   quantity    Int
+  price       Decimal
+  updated_at  DateTime @updatedAt
 
   cart        Cart @relation(fields: [cart_id],references:[id])
   product     Product @relation(fields: [product_id],references:[id])
