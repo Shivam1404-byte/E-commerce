@@ -52,13 +52,13 @@ model Product {
   name          String
   descriptions  String
   stock         Int
-  price         Int
+  price         Decimal
   store_id      String
   created_at    DateTime  @default(now())
   updated_at    DateTime  @updatedAt
   is_published  Boolean @default(false)
   is_deleted    Boolean @default(false)
-  categoryId    String?
+  categoryId    String? 
   
   cartItem      CartItem[]
   OrderItem     OrderItem[]
@@ -93,7 +93,6 @@ model Cart {
 enum CartStatus {
   ACTIVE
   CHECKED_OUT
-  ABANDONED
 }
 
 
@@ -104,6 +103,7 @@ model CartItem {
   quantity    Int
   price       Decimal
   updated_at  DateTime @updatedAt
+  created_at  DateTime @default(now())
 
   cart        Cart @relation(fields: [cart_id],references:[id])
   product     Product @relation(fields: [product_id],references:[id])

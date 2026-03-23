@@ -12,7 +12,6 @@ export const createProduct = async(req:CustomRequest,res:Response)=>{
     const userId = req.user?.id as string
     
     const product = await create_product(name,description,stock,price,userId,categoryId)
-    
     res.json(product)
 }
 
