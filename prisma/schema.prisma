@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -8,86 +7,88 @@ datasource db {
   provider = "postgresql"
 }
 
-enum Role{
+enum Role {
   ADMIN
   VENDOR
   CONSUMER
 }
 
-enum Status{
+enum Status {
   PENDING
   APPROVED
   SUSPENDED
 }
 
 model User {
-  id              String @id @default(uuid())
-  email           String @unique
-  password_hash   String 
-  role            Role
-  created_at      DateTime     @default(now())
+  id            String   @id @default(uuid())
+  email         String   @unique
+  password_hash String
+  role          Role
+  created_at    DateTime @default(now())
 
-  store           Store[]
-  cart            Cart[]
-  order           Order[]
+  store Store[]
+  cart  Cart[]
+  order Order[]
 }
 
 model Store {
-  id           String @id @default(uuid())
-  name         String
-  vendor_id    String
-  status       Status @default(PENDING)
-  created_at   DateTime     @default(now())
-  is_deleted   Boolean      @default(false)
-  
-  product      Product[]
-  cart         Cart[]
-  order        Order[]
+  id         String   @id @default(uuid())
+  name       String
+  vendor_id  String
+  status     Status   @default(PENDING)
+  created_at DateTime @default(now())
+  is_deleted Boolean  @default(false)
 
-  vendor      User @relation(fields: [vendor_id], references:[id])
+  product Product[]
+  cart    Cart[]
+  order   Order[]
+
+  vendor     User        @relation(fields: [vendor_id], references: [id])
+  orderItems OrderItem[]
 }
 
 model Product {
-  id            String @id @default(uuid())
-  name          String
-  descriptions  String
-  stock         Int
-  price         Decimal
-  store_id      String
-  created_at    DateTime  @default(now())
-  updated_at    DateTime  @updatedAt
-  is_published  Boolean @default(false)
-  is_deleted    Boolean @default(false)
-  categoryId    String? 
-  
-  cartItem      CartItem[]
-  OrderItem     OrderItem[]
+  id           String   @id @default(uuid())
+  name         String
+  descriptions String
+  stock        Int
+  price        Decimal
+  store_id     String
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  is_published Boolean  @default(false)
+  is_deleted   Boolean  @default(false)
+  categoryId   String?
 
-  category      Category? @relation(fields: [categoryId], references: [id])
-  store         Store @relation(fields: [store_id], references:[id])
+  cartItem  CartItem[]
+  OrderItem OrderItem[]
+
+  category Category? @relation(fields: [categoryId], references: [id])
+  store    Store     @relation(fields: [store_id], references: [id])
 }
 
 model Category {
-  id          String  @id @default(uuid())
-  name        String
+  id   String @id @default(uuid())
+  name String
 
-  products    Product[]
+  products Product[]
 }
 
 model Cart {
-  id          String   @id @default(uuid())
-  user_id     String
-  store_id    String
-  status      CartStatus @default(ACTIVE)
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  id       String     @id @default(uuid())
+  user_id  String
+  store_id String
+  status   CartStatus @default(ACTIVE)
 
-  cartItems   CartItem[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
-  user        User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  store       Store  @relation(fields: [store_id], references: [id], onDelete: Cascade)
+  cart_items CartItem[]
 
-  @@unique([user_id, store_id])
+  user  User  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  store Store @relation(fields: [store_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id, store_id])
 }
 
 enum CartStatus {
@@ -95,21 +96,20 @@ enum CartStatus {
   CHECKED_OUT
 }
 
-
 model CartItem {
-  id          String  @id @default(uuid())
-  cart_id     String
-  product_id  String
-  quantity    Int
-  price       Decimal
-  updated_at  DateTime @updatedAt
-  created_at  DateTime @default(now())
+  id         String   @id @default(uuid())
+  cart_id    String
+  product_id String
+  quantity   Int
+  price      Decimal
+  updated_at DateTime @updatedAt
+  created_at DateTime @default(now())
 
-  cart        Cart @relation(fields: [cart_id],references:[id])
-  product     Product @relation(fields: [product_id],references:[id])
+  cart    Cart    @relation(fields: [cart_id], references: [id])
+  product Product @relation(fields: [product_id], references: [id])
 }
 
-enum orderStatus{
+enum orderStatus {
   PENDING
   PAID
   SHIPPED
@@ -117,28 +117,28 @@ enum orderStatus{
   CANCELLED
 }
 
-model  Order {
-  id                String @id @default(uuid())
-  user_id           String
-  store_id          String
-  status            orderStatus @default(PENDING)
-  idempotency_key   String @unique
-  created_at        DateTime @default(now())
+model Order {
+  id              String      @id @default(uuid())
+  user_id         String
+  store_id        String
+  status          orderStatus @default(PENDING)
+  idempotency_key String      @unique
+  created_at      DateTime    @default(now())
 
-  OrderItem         OrderItem[]
-  user   User  @relation(fields: [user_id], references: [id])
-  store  Store @relation(fields: [store_id], references: [id])
+  OrderItem OrderItem[]
+  user      User        @relation(fields: [user_id], references: [id])
+  store     Store       @relation(fields: [store_id], references: [id])
 }
 
 model OrderItem {
-  id                String @id @default(uuid())
-  order_id          String
-  product_id        String
-  store_id          String
-  quantity          Int
-  purchase_price    Int
+  id             String @id @default(uuid())
+  order_id       String
+  product_id     String
+  store_id       String
+  quantity       Int
+  purchase_price Int
 
-  order             Order @relation(fields: [order_id], references: [id])
-  product           Product @relation(fields: [product_id],references:[id])
-  store  Store @relation(fields: [store_id], references: [id])            
+  order   Order   @relation(fields: [order_id], references: [id])
+  product Product @relation(fields: [product_id], references: [id])
+  store   Store   @relation(fields: [store_id], references: [id])
 }

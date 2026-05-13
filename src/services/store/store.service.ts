@@ -116,11 +116,10 @@ export const updateStore = async(id:string,vendor_id:string,name:string,status:S
     return {Message:"Updated successfully"}
 }
 
-export const deleteStore = async(id:string,vendor_id:string)=>{
+export const deleteStore = async(id:string)=>{
     const Store = await prisma.store.findUnique({
         where:{
-            id:id,
-            vendor_id:vendor_id
+            id:id
         }
     })
 
@@ -129,7 +128,7 @@ export const deleteStore = async(id:string,vendor_id:string)=>{
     }
 
     await prisma.store.update({
-        where:{id:id,vendor_id:vendor_id},
+        where:{id:id},
         data:{
             status:"SUSPENDED",
             is_deleted:true

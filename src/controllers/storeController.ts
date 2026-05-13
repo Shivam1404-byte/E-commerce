@@ -44,7 +44,7 @@ export const delete_store = asyncHandler(async(req:CustomRequest,res:Response)=>
     const {id} = req.params
     const vendor_id = req.user?.id
 
-    const result = await deleteStore(id as string, vendor_id as string)
+    const result = await deleteStore(id as string)
 
     res.json(result)
 })
