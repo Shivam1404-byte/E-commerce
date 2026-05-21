@@ -4,19 +4,20 @@ import { AppError } from "../../utils/appError"
 export const place_order = async (userId: string, idempotency_key: string, storeId: string) => {
     return await prisma.$transaction(async (tx) => {
         // 1. Get cart with items
-        const cart = await tx.cart.findUnique({
+        const cart = await tx.cart.findFirst({
             where: {
-                user_id_store_id: { user_id: userId, store_id: storeId }
+                user_id: userId,
+                store_id: storeId
             },
-            include: { cartItems: true }
+            include: { cart_items: true }
         })
 
-        if (!cart || cart.cartItems.length === 0) {
+        if (!cart || cart.cart_items.length === 0) {
             throw new AppError("Cart not found or empty", 404)
         }
 
         // 2. Lock rows — prevents concurrent orders depleting same stock
-        const productIds = cart.cartItems.map(item => item.product_id)
+        const productIds = cart.cart_items.map(item => item.product_id)
         await tx.$queryRaw`
             SELECT * FROM "Product"
             WHERE id = ANY(${productIds}::uuid[])
@@ -29,7 +30,7 @@ export const place_order = async (userId: string, idempotency_key: string, store
         })
 
         // 4. Check stock for every item
-        for (const item of cart.cartItems) {
+        for (const item of cart.cart_items) {
             const product = products.find(p => p.id === item.product_id)
             if (!product) {
                 throw new AppError("Product not found", 404)
@@ -40,14 +41,14 @@ export const place_order = async (userId: string, idempotency_key: string, store
         }
 
         // 5. Deduct stock
-        for (const item of cart.cartItems) {
+        for (const item of cart.cart_items) {
             await tx.product.update({
                 where: { id: item.product_id },
                 data: { stock: { decrement: item.quantity } }
             })
         }
 
-        const total_price = cart.cartItems.reduce((sum, item) => {
+        const total_price = cart.cart_items.reduce((sum, item) => {
             const product = products.find(p => p.id === item.product_id)!
             return sum + Number(product.price) * item.quantity
         }, 0)
@@ -58,9 +59,8 @@ export const place_order = async (userId: string, idempotency_key: string, store
                 user_id: userId,
                 store_id: storeId,
                 idempotency_key,
-                total_price,  
                 OrderItem: {
-                    create: cart.cartItems.map(item => ({
+                    create: cart.cart_items.map(item => ({
                         product_id: item.product_id,
                         store_id: storeId,
                         quantity: item.quantity,

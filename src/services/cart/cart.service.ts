@@ -68,7 +68,7 @@ export const get_cart = async(storeId:string,id:string)=>{
     const product = await prisma.cart.findMany({
         where:{store_id:storeId,user_id:id},
         include:{
-            cartItems:{
+            cart_items:{
                 include:{
                     product:true
                 }
@@ -123,18 +123,30 @@ export const update_cart = async(productId:string,storeId:string,id:string,cartI
 }
 
 export const delete_cart = async(storeId:string,id:string)=>{
-    const cart = await prisma.cart.update({
-        where:{
-            user_id_store_id: {
-                user_id: id,
-                store_id: storeId
-            }},
-        data: {
-            cartItems: {
-            deleteMany: {}
-            },
-            status: "CHECKED_OUT"}
-        })
+    // First, find the cart by user_id and store_id
+    const cart = await prisma.cart.findFirst({
+        where: {
+            user_id: id,
+            store_id: storeId,
+            status: "ACTIVE"
+        }
+    });
 
-    return cart
+    if (!cart) {
+        throw new AppError("Cart not found", 404);
+    }
+
+    const updatedCart = await prisma.cart.update({
+        where: {
+            id: cart.id
+        },
+        data: {
+            cart_items: {
+                deleteMany: {}
+            },
+            status: "CHECKED_OUT"
+        }
+    });
+
+    return updatedCart;
 }
