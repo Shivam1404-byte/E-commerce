@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
-import { Role } from "../generated/prisma/client"
+import { Role } from "@prisma/client"
 import { createStore,getStore,updateStore,deleteStore,getAdminStore } from "../services/store/store.service";
 
 interface CustomRequest extends Request {

@@ -4,7 +4,7 @@ import { config } from "dotenv"
 import { NextFunction, Request, Response } from "express"
 import { asyncHandler } from "../utils/asyncHandler"
 import { AppError } from "../utils/appError"
-import { Role } from "../generated/prisma/client"
+import { Role } from '@prisma/client'
 config()
 
 declare global{
