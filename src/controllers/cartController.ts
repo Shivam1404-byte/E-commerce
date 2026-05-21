@@ -1,6 +1,6 @@
 import { Request,Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
-import { Role } from "../generated/prisma/enums";
+import { Role } from "@prisma/client";
 import { add_cart, delete_cart, get_cart, update_cart } from "../services/cart/cart.service";
 
 interface CustomRequest extends Request{

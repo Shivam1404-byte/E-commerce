@@ -1,6 +1,6 @@
 import {prisma} from "../../db/prisma"
 import { AppError } from '../../utils/appError'
-import { Status } from "../../generated/prisma/client"
+import { Status } from '@prisma/client'
 import bcrypt from "bcrypt"
 
 type Store={
