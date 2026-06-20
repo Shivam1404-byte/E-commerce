@@ -1,4 +1,4 @@
-# E-Commerce Backend (Work in Progress)
+# E-Commerce Backend
 
 ## Overview
 This project is the backend foundation of an e-commerce platform.  
@@ -29,6 +29,7 @@ src/
  ├── middlewares/
  ├── prisma/
 
+
 ## API Endpoints
 
 ### POST /auth/register
@@ -52,6 +53,9 @@ npm run dev
 - DATABASE_URL
 - JWT_SECRET
 - PORT
+
+## Live URL
+https://e-commerce-qg8k.onrender.com
 
 ## Roadmap
 - Implement role-based access control (Admin, Vendor, Customer)
